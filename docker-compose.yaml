@@ -1,0 +1,55 @@
+version: "3"
+services:
+  zdepartmentservice:
+    image: zdepartmentservice
+    build: ./zdepartmentservice
+    ports:
+      - "7090:8080"
+    environment:
+        SPRING_DATASOURCE_URL: "jdbc:mysql://mysqldb:3306/zdep?createDatabaseIfNotExist=true"
+        SPRING_DATASOURCE_USERNAME: "root"
+        SPRING_DATASOURCE_PASSWORD: "root"
+        ELASTIC_APM_SECRET_TOKEN: "p5rRvCMmDeLWWtsRtL"
+        ELASTIC_APM_SERVER_URL: "https://f9b0903167784ce6bf6cb14fe05a1a3b.apm.us-central1.gcp.cloud.es.io:443"
+        ELASTIC_APM_LOG_LEVEL: "DEBUG"
+    depends_on:
+      - mysqldb
+
+  zlogservice:
+    image: zlogservice
+    build: ./zlogservice
+    ports:
+      - "6090:7070"
+    environment:
+        SPRING_DATASOURCE_URL: "jdbc:mysql://mysqldb:3306/zlog?createDatabaseIfNotExist=true"
+        SPRING_DATASOURCE_USERNAME: "root"
+        SPRING_DATASOURCE_PASSWORD: "root"
+        ELASTIC_APM_SECRET_TOKEN: "p5rRvCMmDeLWWtsRtL"
+        ELASTIC_APM_SERVER_URL: "https://f9b0903167784ce6bf6cb14fe05a1a3b.apm.us-central1.gcp.cloud.es.io:443"
+        ELASTIC_APM_LOG_LEVEL: "DEBUG"
+    depends_on:
+      - mysqldb
+
+  zuserservice:
+    image: zuserservice
+    build: ./zuserservice
+    ports:
+      - "5090:9191"
+    environment:
+        SPRING_DATASOURCE_URL: "jdbc:mysql://mysqldb:3306/zuser?createDatabaseIfNotExist=true"
+        SPRING_DATASOURCE_USERNAME: "root"
+        SPRING_DATASOURCE_PASSWORD: "root"
+        ELASTIC_APM_SECRET_TOKEN: "p5rRvCMmDeLWWtsRtL"
+        ELASTIC_APM_SERVER_URL: "https://f9b0903167784ce6bf6cb14fe05a1a3b.apm.us-central1.gcp.cloud.es.io:443"
+        ELASTIC_APM_LOG_LEVEL: "DEBUG"
+    depends_on:
+      - mysqldb
+      - zdepartmentservice
+
+  mysqldb:
+    image: mysql:8
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=zservices
